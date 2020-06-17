@@ -4,10 +4,7 @@ import matyk.engine.data.Player;
 import matyk.engine.data.World;
 import matyk.engine.io.Input;
 import matyk.game.main.Main;
-import matyk.game.main.blocks.BlockDirt;
-import matyk.game.main.blocks.BlockGrass;
-import matyk.game.main.blocks.BlockLever;
-import matyk.game.main.blocks.BlockStone;
+import matyk.game.main.blocks.*;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -63,20 +60,24 @@ public class Client {
             lag = 0;
         }
 
-        if(Input.isKeyDown(GLFW_KEY_0)) {
+        if(Input.isKeyDown(GLFW_KEY_1)) {
             Main.pBlock = new BlockDirt();
         }
 
-        if(Input.isKeyDown(GLFW_KEY_1)) {
+        if(Input.isKeyDown(GLFW_KEY_2)) {
             Main.pBlock = new BlockGrass();
         }
 
-        if(Input.isKeyDown(GLFW_KEY_2)) {
+        if(Input.isKeyDown(GLFW_KEY_3)) {
             Main.pBlock = new BlockLever();
         }
 
-        if(Input.isKeyDown(GLFW_KEY_3)) {
+        if(Input.isKeyDown(GLFW_KEY_4)) {
             Main.pBlock = new BlockStone();
+        }
+
+        if(Input.isKeyDown(GLFW_KEY_5)) {
+            Main.pBlock = new BlockGlow();
         }
     }
 }

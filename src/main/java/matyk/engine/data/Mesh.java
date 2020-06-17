@@ -18,6 +18,7 @@ public class Mesh {
     public int tbo;
     public int nbo;
     public int lbo;
+    public int abo;
 
     public int ibo;
 
@@ -100,6 +101,13 @@ public class Mesh {
         glVertexAttribPointer(3, 1, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+        abo = glGenBuffers();
+
+        glBindBuffer(GL_ARRAY_BUFFER, abo);
+        glBufferData(GL_ARRAY_BUFFER, aBuf,  GL_STATIC_DRAW);
+        glVertexAttribPointer(4, 1, GL_FLOAT, false, 0, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
         ibo = glGenBuffers();
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -110,6 +118,7 @@ public class Mesh {
         glEnableVertexAttribArray(1);
         glEnableVertexAttribArray(2);
         glEnableVertexAttribArray(3);
+        glEnableVertexAttribArray(4);
 
         glBindVertexArray(0);
 

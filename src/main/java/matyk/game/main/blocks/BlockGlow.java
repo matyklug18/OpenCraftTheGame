@@ -2,13 +2,9 @@ package matyk.game.main.blocks;
 
 import matyk.engine.data.Block;
 import matyk.engine.data.EnumSide;
-import matyk.engine.data.World;
 import org.joml.Vector3i;
 
-public class BlockLever extends Block {
-    public boolean active = false;
-
-
+public class BlockGlow extends Block {
     @Override
     public boolean isFull() {
         return true;
@@ -16,7 +12,7 @@ public class BlockLever extends Block {
 
     @Override
     public int getX(EnumSide side) {
-        return active ? 4 : 3;
+        return 6;
     }
 
     @Override
@@ -26,22 +22,21 @@ public class BlockLever extends Block {
 
     @Override
     public boolean hasAction() {
-        return true;
+        return false;
     }
 
     @Override
     public void onActivated(Vector3i pos) {
-        active = !active;
-        World.setBlockAt(pos.x, pos.y, pos.z, this);
-    }
 
-    @Override
-    public int getLightLevel() {
-        return active ? 4 : 0;
     }
 
     @Override
     public boolean isTransparent() {
         return false;
+    }
+
+    @Override
+    public int getLightLevel() {
+        return 15;
     }
 }

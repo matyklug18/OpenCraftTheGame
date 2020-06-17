@@ -225,7 +225,6 @@ public class Main {
         if (value < 1)
             return;
 
-
         Block block = blocks[pos.x][pos.y][pos.z];
 
         Block right = null;
@@ -306,6 +305,85 @@ public class Main {
     }
 
     public static void aPropagate(Vector3i pos, Block[][][] blocks, int value) {
+        if (value < 1)
+            return;
 
+        Block block = blocks[pos.x][pos.y][pos.z];
+
+        Block right = null;
+        if(pos.x < World.size.x * 16 - 1)
+            right = blocks[pos.x + 1][pos.y][pos.z];
+
+        Block left = null;
+        if(pos.x > 0)
+            left = blocks[pos.x - 1][pos.y][pos.z];
+
+        Block top = null;
+        if(pos.y < World.size.y * 16 - 1)
+            top = blocks[pos.x][pos.y + 1][pos.z];
+
+        Block bot = null;
+        if(pos.y > 0)
+            bot = blocks[pos.x][pos.y - 1][pos.z];
+
+        Block front = null;
+        if(pos.z < World.size.z * 16 - 1)
+            front = blocks[pos.x][pos.y][pos.z + 1];
+
+        Block back = null;
+        if(pos.z > 0)
+            back = blocks[pos.x][pos.y][pos.z - 1];
+
+        if(block.isTransparent() || block.getLightLevel() > 0) {
+
+            for(int l = 0; l < 6; l++) {
+                block.aLightLevel[l] = value;
+            }
+
+            if(right != null && right.aLightLevel[1] < value) {
+                if (!right.isTransparent())
+                    right.aLightLevel[1] = value;
+                else
+                    aPropagate(new Vector3i(pos).add(new Vector3i(1, 0, 0)), blocks, value - 1);
+            }
+
+            if(left != null && left.aLightLevel[0] < value) {
+                if (!left.isTransparent())
+                    left.aLightLevel[0] = value;
+                else
+                    aPropagate(new Vector3i(pos).add(new Vector3i(-1, 0, 0)), blocks, value - 1);
+            }
+
+            if(top != null && top.aLightLevel[3] < value) {
+                if (!top.isTransparent())
+                    top.aLightLevel[3] = value;
+                else
+                    aPropagate(new Vector3i(pos).add(new Vector3i(0, 1, 0)), blocks, value - 1);
+            }
+
+            if(bot != null && bot.aLightLevel[2] < value) {
+                if (!bot.isTransparent())
+                    bot.aLightLevel[2] = value;
+                else
+                    aPropagate(new Vector3i(pos).add(new Vector3i(0, -1, 0)), blocks, value - 1);
+            }
+
+            if(front != null && front.aLightLevel[5] < value) {
+                if (!front.isTransparent())
+                    front.aLightLevel[5] = value;
+                else
+                    aPropagate(new Vector3i(pos).add(new Vector3i(0, 0, 1)), blocks, value - 1);
+            }
+
+            if(back != null && back.aLightLevel[4] < value) {
+                if (!back.isTransparent())
+                    back.aLightLevel[4] = value;
+                else
+                    aPropagate(new Vector3i(pos).add(new Vector3i(0, 0, -1)), blocks, value - 1);
+            }
+        }
+
+        if(World.chunks[pos.x/16][pos.y/16][pos.z/16] != null)
+            World.chunks[pos.x/16][pos.y/16][pos.z/16].dirty = true;
     }
 }

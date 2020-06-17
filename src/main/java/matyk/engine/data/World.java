@@ -156,6 +156,23 @@ public class World {
                 }
             }
         }
+
+        for (int i = 0; i < World.size.x * 16; i++) {
+            for (int j = 0; j < World.size.y * 16; j++) {
+                for (int k = 0; k < World.size.z * 16; k++) {
+                    for(int l = 0; l < 6; l ++)
+                        allBlocks[i][j][k].aLightLevel[l] = 0;
+                }
+            }
+        }
+        for (int i = 0; i < World.size.x * 16; i++) {
+            for (int j = 0; j < World.size.y * 16; j++) {
+                for (int k = 0; k < World.size.z * 16; k++) {
+                    Main.aPropagate(new Vector3i(i, j, k), allBlocks, allBlocks[i][j][k].getLightLevel());
+                }
+            }
+        }
+
         clean();
     }
 }

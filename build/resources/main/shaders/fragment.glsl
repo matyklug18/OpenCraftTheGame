@@ -3,6 +3,7 @@
 in vec3  passNorm;
 in vec2  passTex;
 in float passLight;
+in float passALight;
 
 out vec4 outColor;
 
@@ -22,7 +23,20 @@ void main() {
     if(passNorm.y < -0.01)
         bright = 0.3;
 
-    outColor = vec4(texture(tex, passTex).rgb * bright * ( (sin(timeOfDay / 157.) + 1) / 2 / 1.5 + 0.5 ) * ( passLight / 15. + 0.2), 1.) ;
+    float timeOfDayF = ( (sin(timeOfDay) + 1) / 2 ); //day night
+    float sky = ( passLight / 5. ); //sky
+    float art = ( passALight / 15. ); //glow
+
+    //from the sun
+    float sun = ( timeOfDayF * sky );
+
+    const float ambient = 0.2;
+
+    float result = ( sun + art * (0.99999 - sun ) );
+    result = (ambient + (result * 0.8)) * bright;
+
+    outColor = vec4(texture(tex, passTex).rgb * result, 1.) ;
+
     //outColor = vec4(vec3(bright), 1);
     //outColor = vec4(( passLight / 15. + 0.2));
 }
