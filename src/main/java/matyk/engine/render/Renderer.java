@@ -46,12 +46,6 @@ public class Renderer {
 
         Shader shader = isGui ? gShader : nShader;
 
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
-        glEnableVertexAttribArray(2);
-        glEnableVertexAttribArray(3);
-
-
         glActiveTexture(GL_TEXTURE0);
         if(isGui)
             glBindTexture(GL_TEXTURE_2D, gTexID);
@@ -77,12 +71,6 @@ public class Renderer {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
         glBindTexture(GL_TEXTURE_2D, GL_ZERO);
-
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
-        glDisableVertexAttribArray(2);
-        glDisableVertexAttribArray(3);
-
 
         glBindVertexArray(0);
     }

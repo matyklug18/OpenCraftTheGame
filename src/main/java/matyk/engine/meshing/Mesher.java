@@ -5,7 +5,6 @@ import matyk.engine.data.EnumSide;
 import matyk.engine.data.Mesh;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,150 +75,52 @@ public class Mesher {
             new Vector3f(1, 1, 1),
     };
 
+    private static int indsC = 0;
+
+    private static ArrayList<Vector3f> vertsA = new ArrayList<>();
+    private static ArrayList<Vector3f> normsA = new ArrayList<>();
+    private static ArrayList<Integer> indsA = new ArrayList<>();
+    private static ArrayList<Vector2f> texsA = new ArrayList<>();
+    private static ArrayList<Integer> lightsA = new ArrayList<>();
+    private static ArrayList<Integer> aLightsA = new ArrayList<>();
+
     /**
      * mesh the blocks, by using simple culling
      * @param blocks the blocks to mesh
      * @return the mesh
      */
     public static Mesh mesh(Block[][][] blocks, Vector3f offset) {
-        ArrayList<Vector3f> vertsA = new ArrayList<>();
-        ArrayList<Vector3f> normsA = new ArrayList<>();
-        ArrayList<Integer> indsA = new ArrayList<>();
-        ArrayList<Vector2f> texsA = new ArrayList<>();
-        ArrayList<Integer> lightsA = new ArrayList<>();
-        ArrayList<Integer> aLightsA = new ArrayList<>();
+        indsC = 0;
 
-        int indsC = 0;
+        vertsA = new ArrayList<>();
+        normsA = new ArrayList<>();
+        indsA = new ArrayList<>();
+        texsA = new ArrayList<>();
+        lightsA = new ArrayList<>();
+        aLightsA = new ArrayList<>();
+
         for(int i = 0; i < blocks.length; i++) {
             for(int j = 0; j < blocks[i].length; j++) {
                 for(int k = 0; k < blocks[i][j].length; k++) {
                     if(((i < blocks.length - 1 && !blocks[i + 1][j][k].isFull()) || i == blocks.length - 1) && blocks[i][j][k].isFull()) {
-                        addToArray(new Vector3f(i,j,k).add(offset), vright, vertsA);
-                        for(int l = 0; l < 4; l++)
-                            normsA.add(nright);
-                        indsC ++;
-
-                        Vector2f[] texCopy = new Vector2f[] {
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.RIGHT), 0).div(16).add(new Vector2f(texs[1])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.RIGHT), 0).div(16).add(new Vector2f(texs[0])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.RIGHT), 0).div(16).add(new Vector2f(texs[3])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.RIGHT), 0).div(16).add(new Vector2f(texs[2])),
-                        };
-
-                        texsA.addAll(Arrays.asList(texCopy));
-
-                        for(int l = 0; l < 4; l++)
-                            lightsA.add(blocks[i][j][k].lightLevel[0]);
-
-                        for(int l = 0; l < 4; l++)
-                            aLightsA.add(blocks[i][j][k].aLightLevel[0]);
+                        check(i,j,k, blocks, offset, new int[] {1,0,3,2}, EnumSide.RIGHT, vright, nright, 0);
                     }
                     if(((i > 0 && !blocks[i - 1][j][k].isFull()) || i == 0) && blocks[i][j][k].isFull()) {
-                        addToArray(new Vector3f(i,j,k).add(offset), vleft, vertsA);
-                        for(int l = 0; l < 4; l++)
-                            normsA.add(nleft);
-                        indsC ++;
-
-                        Vector2f[] texCopy = new Vector2f[] {
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.LEFT), 0).div(16).add(new Vector2f(texs[3])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.LEFT), 0).div(16).add(new Vector2f(texs[1])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.LEFT), 0).div(16).add(new Vector2f(texs[2])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.LEFT), 0).div(16).add(new Vector2f(texs[0])),
-                        };
-
-                        texsA.addAll(Arrays.asList(texCopy));
-
-                        for(int l = 0; l < 4; l++)
-                            lightsA.add(blocks[i][j][k].lightLevel[1]);
-
-                        for(int l = 0; l < 4; l++)
-                            aLightsA.add(blocks[i][j][k].aLightLevel[1]);
+                        check(i,j,k, blocks, offset, new int[] {3,1,2,0}, EnumSide.LEFT, vleft, nleft, 1);
                     }
 
                     if(((j < blocks[i].length - 1 && !blocks[i][j + 1][k].isFull()) || j == blocks[i].length - 1) && blocks[i][j][k].isFull()) {
-                        addToArray(new Vector3f(i,j,k).add(offset), vtop, vertsA);
-                        for(int l = 0; l < 4; l++)
-                            normsA.add(ntop);
-                        indsC ++;
-
-                        Vector2f[] texCopy = new Vector2f[] {
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.TOP), 0).div(16).add(new Vector2f(texs[0])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.TOP), 0).div(16).add(new Vector2f(texs[1])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.TOP), 0).div(16).add(new Vector2f(texs[2])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.TOP), 0).div(16).add(new Vector2f(texs[3])),
-                        };
-
-                        texsA.addAll(Arrays.asList(texCopy));
-
-                        for(int l = 0; l < 4; l++)
-                            lightsA.add(blocks[i][j][k].lightLevel[2]);
-
-                        for(int l = 0; l < 4; l++)
-                            aLightsA.add(blocks[i][j][k].aLightLevel[2]);
+                        check(i,j,k, blocks, offset, new int[] {0,1,2,3}, EnumSide.TOP, vtop, ntop, 2);
                     }
                     if(((j > 0 && !blocks[i][j - 1][k].isFull()) || j == 0) && blocks[i][j][k].isFull()) {
-                        addToArray(new Vector3f(i,j,k).add(offset), vbot, vertsA);
-                        for(int l = 0; l < 4; l++)
-                            normsA.add(nbot);
-                        indsC ++;
-
-                        Vector2f[] texCopy = new Vector2f[] {
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BOT), 0).div(16).add(new Vector2f(texs[0])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BOT), 0).div(16).add(new Vector2f(texs[1])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BOT), 0).div(16).add(new Vector2f(texs[2])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BOT), 0).div(16).add(new Vector2f(texs[3])),
-                        };
-
-                        texsA.addAll(Arrays.asList(texCopy));
-
-                        for(int l = 0; l < 4; l++)
-                            lightsA.add(blocks[i][j][k].lightLevel[3]);
-
-                        for(int l = 0; l < 4; l++)
-                            aLightsA.add(blocks[i][j][k].aLightLevel[3]);
+                        check(i,j,k, blocks, offset, new int[] {0,1,2,3}, EnumSide.BOT, vbot, nbot, 3);
                     }
 
                     if(((k < blocks[i][j].length - 1 && !blocks[i][j][k + 1].isFull()) || k == blocks[i][j].length - 1) && blocks[i][j][k].isFull()) {
-                        addToArray(new Vector3f(i,j,k).add(offset), vfront, vertsA);
-                        for(int l = 0; l < 4; l++)
-                            normsA.add(nfront);
-                        indsC ++;
-
-                        Vector2f[] texCopy = new Vector2f[] {
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.FRONT), 0).div(16).add(new Vector2f(texs[3])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.FRONT), 0).div(16).add(new Vector2f(texs[1])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.FRONT), 0).div(16).add(new Vector2f(texs[2])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.FRONT), 0).div(16).add(new Vector2f(texs[0])),
-                        };
-
-                        texsA.addAll(Arrays.asList(texCopy));
-
-                        for(int l = 0; l < 4; l++)
-                            lightsA.add(blocks[i][j][k].lightLevel[4]);
-
-                        for(int l = 0; l < 4; l++)
-                            aLightsA.add(blocks[i][j][k].aLightLevel[4]);
+                        check(i,j,k, blocks, offset, new int[] {3,1,2,0}, EnumSide.FRONT, vfront, nfront, 4);
                     }
                     if(((k > 0 && !blocks[i][j][k - 1].isFull()) || k == 0) && blocks[i][j][k].isFull()) {
-                        addToArray(new Vector3f(i,j,k).add(offset), vback, vertsA);
-                        for(int l = 0; l < 4; l++)
-                            normsA.add(nback);
-                        indsC ++;
-
-                        Vector2f[] texCopy = new Vector2f[] {
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BACK), 0).div(16).add(new Vector2f(texs[3])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BACK), 0).div(16).add(new Vector2f(texs[2])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BACK), 0).div(16).add(new Vector2f(texs[1])),
-                                new Vector2f(blocks[i][j][k].getX(EnumSide.BACK), 0).div(16).add(new Vector2f(texs[0])),
-                        };
-
-                        texsA.addAll(Arrays.asList(texCopy));
-
-                        for(int l = 0; l < 4; l++)
-                            lightsA.add(blocks[i][j][k].lightLevel[5]);
-
-                        for(int l = 0; l < 4; l++)
-                            aLightsA.add(blocks[i][j][k].aLightLevel[5]);
+                        check(i,j,k, blocks, offset, new int[] {3,2,1,0}, EnumSide.BACK, vback, nback, 5);
                     }
                 }
             }
@@ -268,5 +169,35 @@ public class Mesher {
             myVerts.add(new Vector3f(vert.x + dis.x, vert.y + dis.y, vert.z + dis.z));
         }
         array.addAll(myVerts);
+    }
+
+    private static void makeNorms(Vector3f norm, ArrayList<Vector3f> normsA) {
+        for(int l = 0; l < 4; l++)
+            normsA.add(norm);
+    }
+
+    private static Vector2f[] texCopy(EnumSide side, Block[][][] blocks, int i, int j, int k, int[] texI) {
+        Vector2f[] texCopy = new Vector2f[] {
+                new Vector2f(blocks[i][j][k].getX(side), 0).div(16).add(new Vector2f(texs[texI[0]])),
+                new Vector2f(blocks[i][j][k].getX(side), 0).div(16).add(new Vector2f(texs[texI[1]])),
+                new Vector2f(blocks[i][j][k].getX(side), 0).div(16).add(new Vector2f(texs[texI[2]])),
+                new Vector2f(blocks[i][j][k].getX(side), 0).div(16).add(new Vector2f(texs[texI[3]])),
+        };
+
+        return texCopy;
+    }
+
+    private static void check(int i, int j, int k, Block[][][] blocks, Vector3f offset, int[] tex, EnumSide theEnumSide, Vector3f[] vside, Vector3f nside, int lightLevelInd) {
+            addToArray(new Vector3f(i,j,k).add(offset), vside, vertsA);
+            makeNorms(nside, normsA);
+            indsC ++;
+
+            texsA.addAll(Arrays.asList(texCopy(theEnumSide, blocks, i, j, k, tex)));
+
+            for(int l = 0; l < 4; l++)
+                lightsA.add(blocks[i][j][k].lightLevel[lightLevelInd]);
+
+            for(int l = 0; l < 4; l++)
+                aLightsA.add(blocks[i][j][k].aLightLevel[lightLevelInd]);
     }
 }

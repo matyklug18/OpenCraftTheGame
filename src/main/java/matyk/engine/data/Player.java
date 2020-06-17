@@ -38,10 +38,41 @@ public class Player {
 
         setPos(new Vector3f(getPos()).add(result.div(10f)));
 
+        int xO = 0;
+        int xN = 0;
+        int yO = 0;
+        int yN = 0;
+        int zO = 0;
+        int zN = 0;
+
+        if(((int) pos.x)/16 >= World.size.x) {
+            xO = -1;
+        }
+
+        if(((int) pos.x)/16 <= 1) {
+            xN = 1;
+        }
+
+        if(((int) pos.y)/16 >= World.size.y) {
+            yO = -1;
+        }
+
+        if(((int) pos.y)/16 <= 1) {
+            yN = 1;
+        }
+
+        if(((int) pos.z)/16 >= World.size.z) {
+            zO = -1;
+        }
+
+        if(((int) pos.z)/16 <= 1) {
+            zN = 1;
+        }
+
         boolean collides = false;
-        for(int i = 0; i < World.size.x; i++) {
-            for (int j = 0; j < World.size.y; j++) {
-                for (int k = 0; k < World.size.z; k++) {
+        for(int i = (((int)pos.x) / 16 - 1) + xN; i <= (((int)pos.x) / 16) + xO; i++) {
+            for (int j = (((int)pos.y) / 16 - 1) + yN; j <= (((int)pos.y) / 16) + yO; j++) {
+                for (int k = (((int)pos.z) / 16 - 1) + zN; k <= (((int)pos.z) / 16) + zO; k++) {
                     for(int x = 0; x < 16; x++) {
                         for (int y = 0; y < 16; y++) {
                             for (int z = 0; z < 16; z++) {

@@ -9,10 +9,11 @@ import matyk.game.main.blocks.BlockAir;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class World {
-    public static final Vector3i size = new Vector3i(4,8,4);
+    public static final Vector3i size = new Vector3i(8,8,8);
 
     public static Chunk[][][] chunks = new Chunk[size.x][size.y][size.z];
 
@@ -54,6 +55,28 @@ public class World {
         return returnV;
     }
 
+    public static Block[][][] getAllBlocksCopy() {
+        Block[][][] returnV = new Block[World.size.x*16][World.size.y*16][World.size.z*16];
+        for(int i = 0; i < World.size.x; i++) {
+            for (int j = 0; j < World.size.y; j++) {
+                for (int k = 0; k < World.size.z; k++) {
+                    for (int x = 0; x < 16; x++) {
+                        for (int y = 0; y < 16; y++) {
+                            for (int z = 0; z < 16; z++) {
+                                Block old = chunks[i][j][k].blocks[x][y][z];
+                                Block block = Utils.forge(chunks[i][j][k].blocks[x][y][z].getClass());
+                                block.lightLevel = old.lightLevel;
+                                block.aLightLevel = old.aLightLevel;
+                                returnV[i*16+x][j*16+y][k*16+z] = block;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return returnV;
+    }
+
     public static Block getBlockAt(int x, int y, int z) {
         return chunks[x/16][y/16][z/16].blocks[x%16][y%16][z%16];
     }
@@ -70,7 +93,7 @@ public class World {
             for (int j = 0; j < World.size.y; j++) {
                 for (int k = 0; k < World.size.z; k++) {
                     if(World.chunks[i][j][k].dirty) {
-                        World.chunks[i][j][k].mesh = Mesher.mesh(World.chunks[i][j][k].blocks, new Vector3f(i, j, k));
+                        World.chunks[i][j][k].mesh = Mesher.mesh(World.chunks[i][j][k].blocks, new Vector3f(i, j, k).mul(16));
                         World.chunks[i][j][k].dirty = false;
                     }
                 }
@@ -108,12 +131,12 @@ public class World {
 
         Block[][][] allBlocks = getAllBlocks();
 
+
         for (int i = 0; i < World.size.x * 16; i++) {
             for (int j = 0; j < World.size.y * 16; j++) {
                 for (int k = 0; k < World.size.z * 16; k++) {
-                    for(int l = 0; l < 6; l++) {
-                        //allBlocks[i][j][k].lightLevel[l] = 0;
-                    }
+                    for(int l = 0; l < 6; l ++)
+                        allBlocks[i][j][k].lightLevel[l] = 0;
                 }
             }
         }
@@ -124,7 +147,7 @@ public class World {
                     if(!(allBlocks[i][j][k].isTransparent()))
                         for (int l = j + 1; l < World.size.y * 16; l ++) {
                             if (l == World.size.y * 16 - 1) {
-                                Main.propagate(new Vector3i(i,j,k), allBlocks, 15);
+                                Main.propagate(new Vector3i(i,j + 1,k), allBlocks, 5);
                                 break;
                             }
                             if(!(allBlocks[i][l][k].isTransparent()))
@@ -133,7 +156,6 @@ public class World {
                 }
             }
         }
-        clean(x,y,z);
-        //clean();
+        clean();
     }
 }

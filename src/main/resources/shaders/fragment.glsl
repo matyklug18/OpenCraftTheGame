@@ -22,7 +22,7 @@ void main() {
     if(passNorm.y < -0.01)
         bright = 0.3;
 
-    outColor = vec4(texture(tex, passTex).rgb * bright * ( (sin(timeOfDay / 157.) + 1) / 2 / 1.5 + 0.5 ) * ( passLight / 15. + 0.2), 1.) ;
+    outColor = vec4(texture(tex, passTex).rgb * bright * ( (sin(timeOfDay / 157.) + 1) / 2 / 1.5 + 0.5 ) * ( passLight / 5. + 0.2), 1.) ;
     //outColor = vec4(vec3(bright), 1);
     //outColor = vec4(( passLight / 15. + 0.2));
 }

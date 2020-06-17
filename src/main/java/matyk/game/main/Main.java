@@ -21,6 +21,7 @@ import org.joml.Vector3i;
 
 import java.util.Random;
 
+import static matyk.engine.utils.Utils.forge;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
@@ -29,14 +30,7 @@ public class Main {
 
     public static float timeOfDay = 0;
 
-    private static <T> T forge(final Class<T> type) {
-        try {
-            return type.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+
 
     public static Block pBlock = new BlockDirt();
 
@@ -125,7 +119,6 @@ public class Main {
             for(int j = 0; j < 256; j ++) {
                 dir.add(new Vector3f(rand.nextFloat()*2-1, rand.nextFloat()*2-1.1f, rand.nextFloat()*2-1));
                 pos.add(dir);
-                //dir = new Vector3f(0,-1,0);
                 dir.normalize();
 
                 if((int) pos.x < World.size.x*16 && (int) pos.y < World.size.y*16 && (int) pos.z < World.size.z*16 && (int) pos.x >= 0 && (int) pos.y >= 0 && (int) pos.z >= 0) {
@@ -151,7 +144,7 @@ public class Main {
                     if(!(blocks[i][j][k].isTransparent()))
                         for (int y = j + 1; y < World.size.y * 16; y ++) {
                             if (y == World.size.y * 16 - 1) {
-                                propagate(new Vector3i(i,j+1,k), blocks, 15);
+                                propagate(new Vector3i(i,j+1,k), blocks, 5);
                                 break;
                             }
                             if(!(blocks[i][y][k].isTransparent()))
@@ -232,10 +225,11 @@ public class Main {
         if (value < 1)
             return;
 
+
         Block block = blocks[pos.x][pos.y][pos.z];
 
         Block right = null;
-        if(pos.x < World.size.x)
+        if(pos.x < World.size.x * 16 - 1)
             right = blocks[pos.x + 1][pos.y][pos.z];
 
         Block left = null;
@@ -243,7 +237,7 @@ public class Main {
             left = blocks[pos.x - 1][pos.y][pos.z];
 
         Block top = null;
-        if(pos.y < World.size.y)
+        if(pos.y < World.size.y * 16 - 1)
             top = blocks[pos.x][pos.y + 1][pos.z];
 
         Block bot = null;
@@ -251,7 +245,7 @@ public class Main {
             bot = blocks[pos.x][pos.y - 1][pos.z];
 
         Block front = null;
-        if(pos.z < World.size.z)
+        if(pos.z < World.size.z * 16 - 1)
             front = blocks[pos.x][pos.y][pos.z + 1];
 
         Block back = null;
